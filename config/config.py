@@ -14,13 +14,14 @@ def load_config():
         "ARTICLES_CSV": os.getenv('ARTICLES_CSV'),
         "WORDPRESS_USERNAME": os.getenv('WORDPRESS_USERNAME'),
         "WORDPRESS_PASSWORD": os.getenv('WORDPRESS_PASSWORD'),
-        "WORDPRESS_API_URL": os.getenv('WORDPRESS_API_URL')
+        "WORDPRESS_API_URL": os.getenv('WORDPRESS_API_URL'),
+        "UPLOAD_TO_WORDPRESS": os.getenv('UPLOAD_TO_WORDPRESS', 'True').lower() in ['true', '1', 't', 'yes']
     }
     return config
 
 # Validate configuration
 def validate_config(config):
-    missing_keys = [key for key, value in config.items() if value is None]
+    missing_keys = [key for key, value in config.items() if value is None and key != "UPLOAD_TO_WORDPRESS"]
     if missing_keys:
         logging.error(f"Missing configuration for: {', '.join(missing_keys)}")
         return False

@@ -60,9 +60,10 @@ def main():
             # Convert markdown to HTML
             html_content = convert_markdown_to_html(article_content)
 
-            # Upload article to WordPress
-            upload_to_wordpress(config["WORDPRESS_USERNAME"], config["WORDPRESS_PASSWORD"],
-                                config["WORDPRESS_API_URL"], f"Article on {keyword}", html_content)
+            # Upload article to WordPress if enabled
+            if config["UPLOAD_TO_WORDPRESS"]:
+                upload_to_wordpress(config["WORDPRESS_USERNAME"], config["WORDPRESS_PASSWORD"],
+                                    config["WORDPRESS_API_URL"], f"Article on {keyword}", html_content)
 
 if __name__ == "__main__":
     main()
