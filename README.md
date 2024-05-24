@@ -63,17 +63,17 @@ This project is a Python-based tool designed to automate the creation of blog po
    OPENAI_API_KEY=your_openai_api_key
    PERPLEXITY_API_KEY=your_perplexity_api_key
    OPENAI_ASSISTANT_ID=your_openai_assistant_id
-   KNOWLEDGE_PROFILE_JSON=knowledge_profile.json
-   ARTICLES_CSV=articles.csv
+   KNOWLEDGE_PROFILE_JSON=data/knowledge_profile.json
+   ARTICLES_CSV=data/articles.csv
    WORDPRESS_USERNAME=your_wordpress_username
    WORDPRESS_PASSWORD=your_wordpress_password
    WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2/posts
    ```
 
 2. **Prepare the input files**:
-   - `knowledge_profile.json`: JSON file containing your company's knowledge profile.
-   - `articles.csv`: CSV file with columns `slug` and `keyword` for each article to be created.
-   - `example_article.md`: Markdown file that serves as an example article for structure and tone.
+   - `data/knowledge_profile.json`: JSON file containing your company's knowledge profile.
+   - `data/articles.csv`: CSV file with columns `slug` and `keyword` for each article to be created.
+   - `data/example_article.md`: Markdown file that serves as an example article for structure and tone.
 
 ### Running the Application
 
@@ -96,7 +96,7 @@ This project is a Python-based tool designed to automate the creation of blog po
 
 ### Example File Formats
 
-**articles.csv**
+**data/articles.csv**
 
 ```csv
 slug,keyword

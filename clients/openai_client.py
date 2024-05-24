@@ -2,7 +2,7 @@ import openai
 import logging
 
 def initialize_openai_client(api_key):
-    openai.api_key = api_key
+    openai.api_key
     logging.info("OpenAI client initialized.")
     return openai
 
