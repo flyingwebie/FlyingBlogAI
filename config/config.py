@@ -3,6 +3,12 @@ from dotenv import load_dotenv
 import json
 import logging
 
+def str_to_bool(value):
+    """
+    Convert a string to a boolean.
+    """
+    return value.lower() in ['true', '1', 't', 'yes', 'y']
+
 # Load configuration from .env file
 def load_config():
     load_dotenv()
@@ -15,7 +21,7 @@ def load_config():
         "WORDPRESS_USERNAME": os.getenv('WORDPRESS_USERNAME'),
         "WORDPRESS_PASSWORD": os.getenv('WORDPRESS_PASSWORD'),
         "WORDPRESS_API_URL": os.getenv('WORDPRESS_API_URL'),
-        "UPLOAD_TO_WORDPRESS": os.getenv('UPLOAD_TO_WORDPRESS', 'True').lower() in ['true', '1', 't', 'yes']
+        "UPLOAD_TO_WORDPRESS": str_to_bool(os.getenv('UPLOAD_TO_WORDPRESS', 'True'))
     }
     return config
 
