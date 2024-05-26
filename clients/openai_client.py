@@ -1,6 +1,7 @@
 import openai
 import logging
 from openai import OpenAI
+import requests
 
 def initialize_openai_client(api_key):
     client = OpenAI(api_key=api_key)
@@ -85,8 +86,8 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
         {"role": "user", "content": f"DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS. You are the SEO and Copywriter-Storyteller expert that write for the company {business_name}, located in {country}, write it in {language} language using 7 grade. YOUR TASK: {user_prompt} - DO NOT MENTION OR WRITE THE WORD '{section}', INSTEAD REPLACE IT WITH A BETTER MARKDOWN H2 TITLE BASED ON THE ARTICE'S KEYWORDS. REMEMBER TO Create engaging and informative content with a friendly and persuasive-human tone."}
     ]
 
-    logging.info(f"Prompt sent to OpenAI for section '{section}': {prompt}")
-    #logging.info(f"Prompt sent to OpenAI for section '{section}'")
+    #logging.info(f"Prompt sent to OpenAI for section '{section}': {prompt}")
+    logging.info(f"Prompt sent to OpenAI for section '{section}'")
 
     response = client.chat.completions.create(
         model=model,
@@ -97,6 +98,26 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     section_content = response.choices[0].message.content
     logging.info(f"Section '{section}' created successfully.")
     return section_content
+
+def generate_image(client, prompt):
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=prompt,
+        size="1792x1024",
+        quality="hd",
+        n=1,
+    )
+    image_url = response.data[0].url
+    return image_url
+
+def download_image(image_url, save_path):
+    response = requests.get(image_url)
+    if response.status_code == 200:
+        with open(save_path, 'wb') as file:
+            file.write(response.content)
+        logging.info(f"Image successfully downloaded: {save_path}")
+    else:
+        logging.error(f"Failed to download image: {image_url}")
 
 # Define the instructions for the OpenAI assistant
 instructions = """

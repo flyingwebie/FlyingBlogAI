@@ -1,7 +1,7 @@
 from config.config import load_config, validate_config, validate_files
 from clients.openai_client import (
     initialize_openai_client, create_assistant, create_vector_store_and_upload_files,
-    update_assistant_with_vector_store, create_article, instructions
+    update_assistant_with_vector_store, create_article, generate_image, instructions, download_image
 )
 from clients.perplexity_client import perplexity_research
 from utils.file_utils import save_markdown_file, load_csv_file, load_markdown_file
@@ -108,6 +108,15 @@ def main():
             html_content = convert_markdown_to_html(article_content)
             html_file = os.path.join(article_dir, f"{slug}_Article.html")
             save_html_file(html_file, html_content)
+
+            # Generate images with DALL-E 3 if enabled
+            if config["GENERATE_IMAGES"]:
+                image_prompt = f"Create a realistic picture that visually represents the content described by the article slug: '{slug}'. The image should be detailed, lifelike, and appropriate for a blog post."
+                image_url = generate_image(openai_client, image_prompt)
+                image_file = os.path.join(article_dir, f"{slug}_image.png")
+
+                # Download the image from the URL and save it locally
+                download_image(image_url, image_file)
 
             # Upload article to WordPress if enabled
             if config["UPLOAD_TO_WORDPRESS"]:

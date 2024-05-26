@@ -26,6 +26,7 @@ def load_config():
         "BUSINESS_NAME": os.getenv('BUSINESS_NAME'),
         "COUNTRY": os.getenv('COUNTRY'),
         "LANGUAGE": os.getenv('LANGUAGE'),
+        "GENERATE_IMAGES": os.getenv("GENERATE_IMAGES").lower() == "true"
     }
     return config
 
