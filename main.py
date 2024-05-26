@@ -1,4 +1,4 @@
-from config.config import load_config, validate_config, validate_files, load_json_file
+from config.config import load_config, validate_config, validate_files
 from clients.openai_client import (
     initialize_openai_client, create_assistant, create_vector_store_and_upload_files,
     update_assistant_with_vector_store, create_article, instructions
@@ -53,8 +53,6 @@ def main():
     parse_sitemap_to_txt(sitemap_xml_path, sitemap_txt_path)
 
     # Process each article
-    research_files = []
-
     for article in articles:
         slug = article['slug']
         keywords = article['keywords'].split(',')
@@ -76,33 +74,23 @@ def main():
             research_content = "\n\n".join([str(result) for result in research_results])
             research_file = os.path.join(article_dir, f"{slug}_perplexity.md")
             save_markdown_file(research_file, research_content)
-            research_files.append(research_file)
 
-        # Create a vector store and upload files (knowledge profile, example article, sitemap, and research files)
-        file_paths = [
-            config["KNOWLEDGE_PROFILE_JSON"],
-            'data/example_article.md',
-            sitemap_txt_path
-        ] + research_files
+            # Create a vector store and upload files (knowledge profile, example article, sitemap, and research files)
+            file_paths = [
+                config["KNOWLEDGE_PROFILE_JSON"],
+                'data/example_article.md',
+                sitemap_txt_path,
+                research_file
+            ]
 
-        vector_store_id = create_vector_store_and_upload_files(openai_client, file_paths, business_name=config["BUSINESS_NAME"])
+            vector_store_id = create_vector_store_and_upload_files(openai_client, file_paths, business_name=config["BUSINESS_NAME"])
 
-        # Update assistant to use the vector store
-        update_assistant_with_vector_store(openai_client, assistant_id, vector_store_id)
+            # Update assistant to use the vector store
+            update_assistant_with_vector_store(openai_client, assistant_id, vector_store_id)
 
-        # Parse sitemap for internal links
-        sitemap_path = 'data/sitemap_index.xml'
-        internal_links = parse_sitemap(sitemap_path)
-
-        for article in articles:
-            slug = article['slug']
-            keywords = article['keywords'].split(',')
-
-            # Ensure research file for the current slug is included
-            research_file = os.path.join(articles_dir, slug, f"{slug}_perplexity.md")
-            if not os.path.isfile(research_file):
-                continue
-            research_content = load_markdown_file(research_file)
+            # Parse sitemap for internal links
+            sitemap_path = 'data/sitemap_index.xml'
+            internal_links = parse_sitemap(sitemap_path)
 
             # Generate article using OpenAI assistant
             business_name = config["BUSINESS_NAME"]

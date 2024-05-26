@@ -19,14 +19,10 @@ def create_assistant(client, name, instructions, model):
     return assistant_id
 
 def create_vector_store_and_upload_files(client, file_paths, business_name):
-    # Create a vector store
     vector_store = client.beta.vector_stores.create(name=f"Vector Store {business_name}")
     logging.info(f"Vector store created: {vector_store.id}")
 
-    # Ready the files for upload
     file_streams = [open(path, "rb") for path in file_paths]
-
-    # Upload files to vector store
     file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
         vector_store_id=vector_store.id, files=file_streams
     )
@@ -42,25 +38,63 @@ def update_assistant_with_vector_store(client, assistant_id, vector_store_id):
     logging.info("Assistant updated to use the vector store.")
 
 def create_article(client, model, assistant_id, slug, keywords, research_content, internal_links, business_name, country, language):
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"ALL SECTIONS THAT YOU CREATE CONTAINS AT LEAST 2 LONG PARAGRAPHS. YOU MUST NOT INVENT LINKS. You are writing for {business_name} and you need to write an article about {slug}. YOU MUST INCLUDE INTERNAL LINKS FROM {internal_links} - read this first and make sure to include real internal links in the final article in the blog post. When told to use retrieval use retrieval, when told to use code_interpreter use code interpreter. Your basic steps are: 1. Read the research content and store these for the article, using the keywords: {keywords}. 2. Write an article with all of this data you've either created or found. Copy from the example article structure and use a neutral-friendly tone. 3. Read the knowledge profile content and use this as a guide to shape the final article. The article should follow the length and the structure of the example article with a human and neutral-friendly tone. When the concept is not easy to understand, use analogies. You are SEOGPT, aiming to create in-depth and interesting blog posts for {business_name}, in {country}. You should write at a grade 7 level in {language}. Every blog post should include at least 3 images and links to their other pages from {business_name}. Ensure the brand links are accurate. Choose only relevant brand pages. Do not invent image links. Pick 5 strictly relevant brand internal links for the articles. First, read the attached files, then create a detailed outline for an article, including up to 5 highly relevant internal collection links and brand image links. IMPORTANT - AT THE BEGINNING OF THE ARTICLE ADD A LIST OF BULLET POINTS OF THE ARTICLE 'KEY POINTS', ADD CONTENT TABLES WITH DATA IN THE ARTICLE USING THE MARKDOWN TABLE AND ADD 3 FAQS TO THE ARTICLE. You can use the content of the files: example_article.md and sitemap_index.txt to create the article."},
-        {"role": "system", "content": f"The article must have: Takeaway Points: Create a bullet points list of key takeaway points from the article about {slug}. Use the research content from the file {slug}_perplexity.md to identify the main points. Introduction: Write an engaging introduction for the article about {slug}. Use the research content from the file {slug}_perplexity.md and the company profile from knowledge_profile.json to provide an overview. Mention key points that will be covered. Main Content: Expand on the main content of the article about {slug}. Provide detailed information and explanations. Use the research content and include relevant internal links. Details: Go into more details on specific aspects of {slug}. Use data, examples, and tables to make the content rich and informative. Include relevant internal links from sitemap_index.txt. Additional Insights: Provide additional insights and perspectives on {slug}. Include any relevant data, charts, and tables to support the points. Use the research content and knowledge_profile.json. Conclusion: Write a strong conclusion for the article about {slug}. Summarize the main points and provide a final takeaway. Mention the long-term benefits and importance of the topic covered. FAQs: Create a list of 3 frequently asked questions related to {slug} and provide detailed answers. Use the research content and knowledge_profile.json to ensure accuracy and relevance."},
-        {"role": "system", "content": f"Research Content: {research_content}"}
+    sections = [
+        "Takeaway Points",
+        "Introduction",
+        "Main Content",
+        "Details",
+        "Conclusion",
+        "FAQs"
     ]
 
-    # Log the prompt
-    #logging.info(f"Prompt sent to OpenAI: {messages}")
+    article_content = ""
+
+    for section in sections:
+        section_content = create_section_content(
+            client,
+            model=model,
+            assistant_id=assistant_id,
+            slug=slug,
+            keywords=keywords,
+            section=section,
+            research_content=research_content,
+            internal_links=internal_links,
+            business_name=business_name,
+            country=country,
+            language=language
+        )
+        article_content += f"## {section}\n\n{section_content}\n\n"
+
+    return article_content
+
+def create_section_content(client, model, assistant_id, slug, keywords, section, research_content, internal_links, business_name, country, language):
+    section_prompts = {
+        "Catchy Title": f"Generate a catchy H1 title of max 60 characters based on the slug {slug}. Use the research content from the file {slug}_perplexity.md to generate the best SEO title for this article.",
+        "Takeaway Points": f"Create a simple bullet points list of key takeaway points. Use the research content from the file {slug}_perplexity.md to identify the main points.",
+        "Introduction": f"Write an engaging and cathy introduction with a friendly and persuasive-human tone for the article about {slug} and why is important keep reading the article - use an Irish Analogy to make the concept easier to understand for our audience. Use the research content from the file {slug}_perplexity.md and the company profile from knowledge_profile.json to provide an overview of the article. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
+        "Main Content": f"Expand on the main content of the article about {slug}. Provide detailed information and explanations mentioning the following keywords: {keywords}. Use the research {slug}_perplexity.md and include relevant internal links {internal_links} using the SEO context and the knowlage base of my company {business_name}: knowledge_profile.json. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
+        "Details": f"Go into more details on specific aspects of {slug}. Use data, examples, and tables to make the content rich and informative from the Reseach Content: {research_content}.  Include any relevant data, charts, and tables to support the points. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
+        "Conclusion": f"Write a strong 'Conclusion' or 'Final Thoughts' for the article about {slug} using the Research Content: {research_content}. Summarize the most critical posts and provide a short final takeaway. STICK TO THE INTRODUCTION.",
+        "FAQs": f"Create a numer list of between 3 or 6 frequently asked questions as related to {slug} and provide detailed answers. Use the research content and knowledge_profile.json to ensure accuracy and relevance and include relevant internal links {internal_links} where it's possible. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION."
+    }
+
+    user_prompt = section_prompts[section]
+
+    prompt = [
+        {"role": "user", "content": f"DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS. You are the SEO and Copywriter-Storyteller expert that write for the company {business_name}, located in {country}, write it in {language} language using 7 grade. Write the section {section} BUT DO NOT MENTION THE SECTION TITLE. YOUR TASK: {user_prompt}. REMEMBER TO Create engaging and informative content with a friendly and persuasive-human tone."}
+    ]
+
+    logging.info(f"Prompt sent to OpenAI for section '{section}': {prompt}")
 
     response = client.chat.completions.create(
         model=model,
-        messages=messages,
-        max_tokens=4096
+        messages=prompt,
+        max_tokens=2048
     )
 
-    article_content = response.choices[0].message.content
-    logging.info("Article created successfully.")
-    return article_content
+    section_content = response.choices[0].message.content
+    logging.info(f"Section '{section}' created successfully.")
+    return section_content
 
 # Define the instructions for the OpenAI assistant
 instructions = """
