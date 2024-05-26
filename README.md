@@ -49,6 +49,9 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    OPENAI_API_KEY=your_openai_api_key
    MODEL=your_openai_model
 
+   # Generate images for articles with DALL-E 3
+   GENERATE_IMAGES=true # true or false
+
    # Perplexity API key for conducting research
    PERPLEXITY_API_KEY=your_perplexity_api_key
 
@@ -62,7 +65,7 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    ARTICLES_CSV=data/articles.csv
 
    # Flag to control whether to upload articles to WordPress
-   UPLOAD_TO_WORDPRESS=true # true or false
+   UPLOAD_TO_WORDPRESS=false # true or false
 
    # WordPress credentials and API URL for uploading drafts
    WORDPRESS_USERNAME=your_wordpress_username
@@ -106,17 +109,18 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    **docker-compose.yaml:**
 
    ```yaml
-   version: '3.8'
+   name: flying-blog-ai
 
    services:
      app:
        build: .
-       container_name: flyingblogai
+       container_name: MagicDocker
        environment:
          - OPENAI_API_KEY=${OPENAI_API_KEY}
          - MODEL=${MODEL}
          - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
          - OPENAI_ASSISTANT_ID=${OPENAI_ASSISTANT_ID}
+         - GENERATE_IMAGES=${GENERATE_IMAGES}
          - KNOWLEDGE_PROFILE_JSON=${KNOWLEDGE_PROFILE_JSON}
          - ARTICLES_CSV=${ARTICLES_CSV}
          - UPLOAD_TO_WORDPRESS=${UPLOAD_TO_WORDPRESS}
@@ -143,7 +147,7 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/yourusername/flyingblogai.git
+   git clone https://github.com/flyingwebie/FlyingBlogAI.git
    cd flyingblogai
    ```
 
@@ -167,6 +171,9 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    OPENAI_API_KEY=your_openai_api_key
    MODEL=your_openai_model
 
+   # Generate images for articles with DALL-E 3
+   GENERATE_IMAGES=true # true or false
+
    # Perplexity API key for conducting research
    PERPLEXITY_API_KEY=your_perplexity_api_key
 
@@ -180,7 +187,7 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    ARTICLES_CSV=data/articles.csv
 
    # Flag to control whether to upload articles to WordPress
-   UPLOAD_TO_WORDPRESS=true # true or false
+   UPLOAD_TO_WORDPRESS=false # true or false
 
    # WordPress credentials and API URL for uploading drafts
    WORDPRESS_USERNAME=your_wordpress_username
@@ -228,6 +235,7 @@ articles/
         ├── slug_perplexity.md
         ├── slug_Article.md
         └── slug_Article.html
+        └── slug_image.png
 ```
 
 Where `YYYY-MM-DD` represents the date the article was created, and `slug-article` represents the slug of the article.

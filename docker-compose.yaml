@@ -1,4 +1,4 @@
-name: FlyingBlog-AI
+name: flying-blog-ai
 
 services:
   app:
@@ -9,6 +9,7 @@ services:
       - MODEL=${MODEL}
       - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
       - OPENAI_ASSISTANT_ID=${OPENAI_ASSISTANT_ID}
+      - GENERATE_IMAGES=${GENERATE_IMAGES}
       - KNOWLEDGE_PROFILE_JSON=${KNOWLEDGE_PROFILE_JSON}
       - ARTICLES_CSV=${ARTICLES_CSV}
       - UPLOAD_TO_WORDPRESS=${UPLOAD_TO_WORDPRESS}
