@@ -4,10 +4,10 @@ import logging
 def perplexity_research(keyword, api_key):
     url = "https://api.perplexity.ai/chat/completions"
     payload = {
-        "model": "pplx-70b-online",
+        "model": "llama-3-sonar-small-32k-online",
         "messages": [
             {"role": "system", "content": "Be precise and concise."},
-            {"role": "user", "content": f"Find highly specific generalised data about {keyword} in 2024."}
+            {"role": "user", "content": f"Find highly specific generalised data about {keyword} in 2024. Do not give me any information about specific brands."}
         ]
     }
     headers = {

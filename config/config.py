@@ -14,6 +14,7 @@ def load_config():
     load_dotenv()
     config = {
         "OPENAI_API_KEY": os.getenv('OPENAI_API_KEY'),
+        "MODEL": os.getenv('MODEL'),
         "PERPLEXITY_API_KEY": os.getenv('PERPLEXITY_API_KEY'),
         "OPENAI_ASSISTANT_ID": os.getenv('OPENAI_ASSISTANT_ID'),
         "KNOWLEDGE_PROFILE_JSON": os.getenv('KNOWLEDGE_PROFILE_JSON'),
@@ -21,7 +22,10 @@ def load_config():
         "WORDPRESS_USERNAME": os.getenv('WORDPRESS_USERNAME'),
         "WORDPRESS_PASSWORD": os.getenv('WORDPRESS_PASSWORD'),
         "WORDPRESS_API_URL": os.getenv('WORDPRESS_API_URL'),
-        "UPLOAD_TO_WORDPRESS": str_to_bool(os.getenv('UPLOAD_TO_WORDPRESS', 'True'))
+        "UPLOAD_TO_WORDPRESS": str_to_bool(os.getenv('UPLOAD_TO_WORDPRESS', 'True')),
+        "BUSINESS_NAME": os.getenv('BUSINESS_NAME'),
+        "COUNTRY": os.getenv('COUNTRY'),
+        "LANGUAGE": os.getenv('LANGUAGE'),
     }
     return config
 
@@ -44,5 +48,8 @@ def validate_files(config):
 
 # Load JSON file
 def load_json_file(file_path):
-    with open(file_path) as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+

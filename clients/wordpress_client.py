@@ -3,9 +3,18 @@ import markdown
 import logging
 
 def convert_markdown_to_html(markdown_content):
+    """
+    Convert markdown content to HTML.
+    """
     html_content = markdown.markdown(markdown_content)
-    logging.info("Converted markdown to HTML.")
     return html_content
+
+def save_html_file(file_path, html_content):
+    """
+    Save HTML content to a file.
+    """
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(html_content)
 
 def upload_to_wordpress(username, password, api_url, article_title, article_content):
     data = {
