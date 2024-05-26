@@ -1,0 +1,23 @@
+name: FlyingBlog-AI
+
+services:
+  app:
+    build: .
+    container_name: MagicDocker
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MODEL=${MODEL}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
+      - OPENAI_ASSISTANT_ID=${OPENAI_ASSISTANT_ID}
+      - KNOWLEDGE_PROFILE_JSON=${KNOWLEDGE_PROFILE_JSON}
+      - ARTICLES_CSV=${ARTICLES_CSV}
+      - UPLOAD_TO_WORDPRESS=${UPLOAD_TO_WORDPRESS}
+      - WORDPRESS_USERNAME=${WORDPRESS_USERNAME}
+      - WORDPRESS_PASSWORD=${WORDPRESS_PASSWORD}
+      - WORDPRESS_API_URL=${WORDPRESS_API_URL}
+      - BUSINESS_NAME=${BUSINESS_NAME}
+      - COUNTRY=${COUNTRY}
+      - LANGUAGE=${LANGUAGE}
+    volumes:
+      - .:/app
+    command: python main.py

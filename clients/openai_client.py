@@ -39,6 +39,7 @@ def update_assistant_with_vector_store(client, assistant_id, vector_store_id):
 
 def create_article(client, model, assistant_id, slug, keywords, research_content, internal_links, business_name, country, language):
     sections = [
+        "Catchy Blog Title",
         "Takeaway Points",
         "Introduction",
         "Main Content",
@@ -69,7 +70,7 @@ def create_article(client, model, assistant_id, slug, keywords, research_content
 
 def create_section_content(client, model, assistant_id, slug, keywords, section, research_content, internal_links, business_name, country, language):
     section_prompts = {
-        "Catchy Title": f"Generate a catchy H1 title of max 60 characters based on the slug {slug}. Use the research content from the file {slug}_perplexity.md to generate the best SEO title for this article.",
+        "Catchy Blog Title": f"JUST WRITE THE TITLE H1 - DO NOT WRITE 'Catchy Blog Title'. Generate a markdown H1 title of a max 60 characters based on the slug {slug}. Use the research content from the file {slug}_perplexity.md to generate the best SEO title for this article. IMPORTANT STICK TO THE INTRODUCTION.",
         "Takeaway Points": f"Create a simple bullet points list of key takeaway points. Use the research content from the file {slug}_perplexity.md to identify the main points.",
         "Introduction": f"Write an engaging and cathy introduction with a friendly and persuasive-human tone for the article about {slug} and why is important keep reading the article - use an Irish Analogy to make the concept easier to understand for our audience. Use the research content from the file {slug}_perplexity.md and the company profile from knowledge_profile.json to provide an overview of the article. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
         "Main Content": f"Expand on the main content of the article about {slug}. Provide detailed information and explanations mentioning the following keywords: {keywords}. Use the research {slug}_perplexity.md and include relevant internal links {internal_links} using the SEO context and the knowlage base of my company {business_name}: knowledge_profile.json. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
@@ -81,10 +82,11 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     user_prompt = section_prompts[section]
 
     prompt = [
-        {"role": "user", "content": f"DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS. You are the SEO and Copywriter-Storyteller expert that write for the company {business_name}, located in {country}, write it in {language} language using 7 grade. Write the section {section} BUT DO NOT MENTION THE SECTION TITLE. YOUR TASK: {user_prompt}. REMEMBER TO Create engaging and informative content with a friendly and persuasive-human tone."}
+        {"role": "user", "content": f"DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS. You are the SEO and Copywriter-Storyteller expert that write for the company {business_name}, located in {country}, write it in {language} language using 7 grade. YOUR TASK: {user_prompt} - DO NOT MENTION OR WRITE THE WORD '{section}', INSTEAD REPLACE IT WITH A BETTER MARKDOWN H2 TITLE BASED ON THE ARTICE'S KEYWORDS. REMEMBER TO Create engaging and informative content with a friendly and persuasive-human tone."}
     ]
 
     logging.info(f"Prompt sent to OpenAI for section '{section}': {prompt}")
+    #logging.info(f"Prompt sent to OpenAI for section '{section}'")
 
     response = client.chat.completions.create(
         model=model,
