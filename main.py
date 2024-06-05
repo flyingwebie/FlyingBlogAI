@@ -55,7 +55,7 @@ def main():
     # Process each article
     for article in articles:
         slug = article['slug']
-        keywords = article['keywords'].split(',')
+        keywords = article['keywords'].split(';')
 
         # Create a directory for each article using its slug
         article_dir = os.path.join(articles_dir, slug)
