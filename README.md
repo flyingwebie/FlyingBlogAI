@@ -1,14 +1,15 @@
 # FlyingBlogAI
 
-FlyingBlogAI is an automated tool designed to streamline the creation of blog posts. This tool utilizes OpenAI's GPT model to generate comprehensive articles based on given keywords and automatically saves them as drafts in WordPress. It also integrates Perplexity AI for conducting research to enhance the quality of the articles.
+FlyingBlogAI is an automated tool designed to streamline the creation of blog posts. This tool utilizes OpenAI's GPT model to generate comprehensive articles based on given keywords and automatically saves them as drafts in WordPress. It also integrates Perplexity AI for conducting research to enhance the quality of the articles The generated articles are enriched with internal links and SEO-friendly content.
 
 ## Features
 
-- Automates blog post creation using OpenAI's GPT model.
-- Conducts research using Perplexity AI to generate relevant content.
-- Saves generated articles as drafts in WordPress.
-- Supports customization of article sections and content structure.
-- Stores articles in a local folder with a structured directory based on the creation date and article slug.
+- Generates high-quality blog articles using OpenAI's GPT-4.
+- Conducts research using Perplexity API.
+- Generates images for articles using DALL-E 3.
+- Handles internal linking using sitemap data.
+- Generates sitemaps for better SEO.
+- Uploads articles to WordPress [soon]
 
 ## Prerequisites
 
@@ -18,148 +19,55 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
 - A Perplexity API key.
 - WordPress credentials and API URL for uploading drafts.
 
-## Setup
+## Requirements
+
+To run FlyingBlogAI, you will need the following software installed on your system:
+
+- **Python**: Version 3.9 or higher. Python is a programming language required to run the scripts.
+- **Docker**: Optional. Docker is used to containerize the application, making it easier to run without worrying about the environment setup.
+- **Git**: Optional. Git is a version control system used to clone the repository. You can also download the repository as a ZIP file if you prefer.
+
+If you don't have these installed, here are some resources to help you get started:
+
+- [Download Python](https://www.python.org/downloads/)
+- [Download Docker](https://www.docker.com/get-started)
+- [Download Git](https://git-scm.com/downloads)
+
+## Installation
 
 ### Using Docker
 
-1. **Clone the repository:**
+1. Build and run the Docker container using Docker Compose:
 
-   ```sh
-   git clone https://github.com/yourusername/flyingblogai.git
-   cd flyingblogai
-   ```
-
-2. **Create and configure your `.env` file:**
-
-   Copy the provided `.env.example` to `.env` and update the values with your own configuration.
-
-   ```sh
-   cp .env.example .env
-   ```
-
-   Update the `.env` file with your specific details:
-
-   ```env
-   # Company Details
-   BUSINESS_NAME=your_business_name
-   COUNTRY=your_country
-   LANGUAGE=your_language
-
-   # OpenAI API key for accessing OpenAI services
-   OPENAI_API_KEY=your_openai_api_key
-   MODEL=your_openai_model
-
-   # Generate images for articles with DALL-E 3
-   GENERATE_IMAGES=true # true or false
-
-   # Perplexity API key for conducting research
-   PERPLEXITY_API_KEY=your_perplexity_api_key
-
-   # OpenAI Assistant ID for creating and managing the assistant (OPTIONAL)
-   OPENAI_ASSISTANT_ID=your_openai_assistant_id
-
-   # Path to the JSON file containing the company's knowledge profile
-   KNOWLEDGE_PROFILE_JSON=data/knowledge_profile.json
-
-   # Path to the CSV file with slugs and keywords for articles
-   ARTICLES_CSV=data/articles.csv
-
-   # Flag to control whether to upload articles to WordPress
-   UPLOAD_TO_WORDPRESS=false # true or false
-
-   # WordPress credentials and API URL for uploading drafts
-   WORDPRESS_USERNAME=your_wordpress_username
-   WORDPRESS_PASSWORD=your_wordpress_password
-   WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2/posts
-   ```
-
-3. **Prepare your data files:**
-
-   - Ensure you have the `knowledge_profile.json` file in the `data` directory.
-   - Populate the `articles.csv` with the slugs and keywords for the articles you want to generate.
-   - Add the `example_article.md` and `sitemap_index.xml` files in the `data` directory.
-
-4. **Build and run the Docker container:**
-
-   **Dockerfile:**
-
-   ```Dockerfile
-   # Use the official Python image from the Docker Hub
-   FROM python:3.10-slim
-
-   # Set the working directory in the container
-   WORKDIR /app
-
-   # Copy the requirements.txt file into the container
-   COPY requirements.txt .
-
-   # Install the required dependencies
-   RUN pip install --no-cache-dir -r requirements.txt
-
-   # Copy the rest of the application code into the container
-   COPY . .
-
-   # Expose the port the app runs on
-   EXPOSE 8000
-
-   # Command to run the application
-   CMD ["python", "main.py"]
-   ```
-
-   **docker-compose.yaml:**
-
-   ```yaml
-   name: flying-blog-ai
-
-   services:
-     app:
-       build: .
-       container_name: MagicDocker
-       environment:
-         - OPENAI_API_KEY=${OPENAI_API_KEY}
-         - MODEL=${MODEL}
-         - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
-         - OPENAI_ASSISTANT_ID=${OPENAI_ASSISTANT_ID}
-         - GENERATE_IMAGES=${GENERATE_IMAGES}
-         - KNOWLEDGE_PROFILE_JSON=${KNOWLEDGE_PROFILE_JSON}
-         - ARTICLES_CSV=${ARTICLES_CSV}
-         - UPLOAD_TO_WORDPRESS=${UPLOAD_TO_WORDPRESS}
-         - WORDPRESS_USERNAME=${WORDPRESS_USERNAME}
-         - WORDPRESS_PASSWORD=${WORDPRESS_PASSWORD}
-         - WORDPRESS_API_URL=${WORDPRESS_API_URL}
-         - BUSINESS_NAME=${BUSINESS_NAME}
-         - COUNTRY=${COUNTRY}
-         - LANGUAGE=${LANGUAGE}
-       volumes:
-         - .:/app
-       command: python main.py
-   ```
-
-   Build and start the services:
-
-   ```sh
-   docker-compose build
+   ```bash
    docker-compose up
    ```
 
 ### Using Python Environment
 
-1. **Clone the repository:**
+1. Clone the repository:
 
-   ```sh
-   git clone https://github.com/flyingwebie/FlyingBlogAI.git
-   cd flyingblogai
+   ```bash
+   git clone https://github.com/yourusername/FlyingBlogAI.git
+   cd FlyingBlogAI
    ```
 
-2. **Create and configure your `.env` file:**
+2. Create and activate a virtual environment:
 
-   Copy the provided `.env.example` to `.env` and update the values with your own configuration.
-
-   ```sh
-   cp .env.example .env
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
-   Update the `.env` file with your specific details:
+3. Install the required packages:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Configuration
+
+1. Copy `.env.example` to `.env` and update the values with your configuration:
 
    ```env
    # Company Details
@@ -170,9 +78,6 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    # OpenAI API key for accessing OpenAI services
    OPENAI_API_KEY=your_openai_api_key
    MODEL=your_openai_model
-
-   # Generate images for articles with DALL-E 3
-   GENERATE_IMAGES=true # true or false
 
    # Perplexity API key for conducting research
    PERPLEXITY_API_KEY=your_perplexity_api_key
@@ -187,42 +92,38 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
    ARTICLES_CSV=data/articles.csv
 
    # Flag to control whether to upload articles to WordPress
-   UPLOAD_TO_WORDPRESS=false # true or false
+   UPLOAD_TO_WORDPRESS=true # true or false
 
    # WordPress credentials and API URL for uploading drafts
    WORDPRESS_USERNAME=your_wordpress_username
    WORDPRESS_PASSWORD=your_wordpress_password
    WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2/posts
-   ```
 
-3. **Prepare your data files:**
-
-   - Ensure you have the `knowledge_profile.json` file in the `data` directory.
-   - Populate the `articles.csv` with the slugs and keywords for the articles you want to generate.
-   - Add the `example_article.md` and `sitemap_index.xml` files in the `data` directory.
-
-4. **Create and activate a virtual environment:**
-
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-
-5. **Install dependencies:**
-
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-6. **Run the application:**
-
-   ```sh
-   python main.py
+   # Generate images for articles with DALL-E 3
+   GENERATE_IMAGES=true # true or false
    ```
 
 ## Usage
 
 Once the application is running, it will automatically start processing the articles listed in `articles.csv`, conducting research using Perplexity AI, generating content using OpenAI, and optionally uploading the drafts to your WordPress site.
+
+### Running the Main Script
+
+To generate articles and publish them to WordPress:
+
+```bash
+python main.py
+```
+
+### Generating Sitemap
+
+To generate a sitemap from a list of URLs:
+
+```bash
+python generate_sitemap.py
+```
+
+This script will read the URLs from `data/sitemap_index.txt` and generate `data/sitemap_index.xml`. If the XML file already exists, it will ask for permission to overwrite it.
 
 ### Directory Structure
 
@@ -240,14 +141,179 @@ articles/
 
 Where `YYYY-MM-DD` represents the date the article was created, and `slug-article` represents the slug of the article.
 
-## Customization
+## Additional Notes
 
-To customize the structure and content of the generated articles, you can modify the prompts and sections in the `openai_client.py` file.
+- Ensure that the `data` directory contains the necessary input files (`knowledge_profile.json`, `articles.csv`, `sitemap_index.txt`).
+- The generated articles, images, and sitemaps will be stored in the `articles` directory with subdirectories organized by date and slug.
+- Make sure to update your `.env` file with correct API keys and configuration details before running the scripts.
 
 ## Contributing
 
-Feel free to submit issues and pull requests. Contributions are welcome!
+Feel free to fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+[MIT](https://choosealicense.com/licenses/mit/)
+
+# FlyingBlogAI
+
+FlyingBlogAI is a comprehensive tool for automating the process of generating blog articles and publishing them on a WordPress site. It uses OpenAI's GPT-4 model for content generation and DALL-E for image creation. The generated articles are enriched with internal links and SEO-friendly content.
+
+## Features
+
+- Generates high-quality blog articles using OpenAI's GPT-4.
+- Conducts research using Perplexity API.
+- Uploads articles to WordPress.
+- Generates images for articles using DALL-E 3.
+- Handles internal linking using sitemap data.
+- Generates sitemaps for better SEO.
+
+## Requirements
+
+To run FlyingBlogAI, you will need the following software installed on your system:
+
+- **Python**: Version 3.9 or higher. Python is a programming language required to run the scripts.
+- **Docker**: Optional. Docker is used to containerize the application, making it easier to run without worrying about the environment setup.
+- **Git**: Optional. Git is a version control system used to clone the repository. You can also download the repository as a ZIP file if you prefer.
+
+If you don't have these installed, here are some resources to help you get started:
+
+- [Download Python](https://www.python.org/downloads/)
+- [Download Docker](https://www.docker.com/get-started)
+- [Download Git](https://git-scm.com/downloads)
+
+## Installation
+
+### Using Docker
+
+1. Build and run the Docker container using Docker Compose:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+### Using Python Environment
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/FlyingBlogAI.git
+   cd FlyingBlogAI
+   ```
+
+2. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+
+3. Install the required packages:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Configuration
+
+1. Copy `.env.example` to `.env` and update the values with your configuration:
+
+   ```env
+   # Company Details
+   BUSINESS_NAME=your_business_name
+   COUNTRY=your_country
+   LANGUAGE=your_language
+
+   # OpenAI API key for accessing OpenAI services
+   OPENAI_API_KEY=your_openai_api_key
+   MODEL=your_openai_model
+
+   # Perplexity API key for conducting research
+   PERPLEXITY_API_KEY=your_perplexity_api_key
+
+   # OpenAI Assistant ID for creating and managing the assistant (OPTIONAL)
+   OPENAI_ASSISTANT_ID=your_openai_assistant_id
+
+   # Path to the JSON file containing the company's knowledge profile
+   KNOWLEDGE_PROFILE_JSON=data/knowledge_profile.json
+
+   # Path to the CSV file with slugs and keywords for articles
+   ARTICLES_CSV=data/articles.csv
+
+   # Flag to control whether to upload articles to WordPress
+   UPLOAD_TO_WORDPRESS=true # true or false
+
+   # WordPress credentials and API URL for uploading drafts
+   WORDPRESS_USERNAME=your_wordpress_username
+   WORDPRESS_PASSWORD=your_wordpress_password
+   WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2/posts
+
+   # Generate images for articles with DALL-E 3
+   GENERATE_IMAGES=true # true or false
+   ```
+
+## Usage
+
+### Running the Main Script
+
+To generate articles and publish them to WordPress:
+
+```bash
+python main.py
+```
+
+### Generating Sitemap
+
+To generate a sitemap from a list of URLs:
+
+```bash
+python generate_sitemap.py
+```
+
+This script will read the URLs from `data/sitemap_index.txt` and generate `data/sitemap_index.xml`. If the XML file already exists, it will ask for permission to overwrite it.
+
+## Docker Setup
+
+### Dockerfile
+
+```dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "main.py"]
+```
+
+### docker-compose.yaml
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: python main.py
+```
+
+## Additional Notes
+
+- Ensure that the `data` directory contains the necessary input files (`knowledge_profile.json`, `articles.csv`, `sitemap_index.txt`).
+- The generated articles, images, and sitemaps will be stored in the `articles` directory with subdirectories organized by date and slug.
+- Make sure to update your `.env` file with correct API keys and configuration details before running the scripts.
+
+## Contributing
+
+Feel free to fork the repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
