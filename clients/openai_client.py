@@ -119,6 +119,23 @@ def download_image(image_url, save_path):
     else:
         logging.error(f"Failed to download image: {image_url}")
 
+def clean_article_content(content):
+    lines_to_remove = [
+        "## Catchy Blog Title",
+        "## Takeaway Points",
+        "## Introduction",
+        "## Main Content",
+        "## Details"
+    ]
+
+    cleaned_lines = []
+    for line in content.split("\n"):
+        if line.strip() not in lines_to_remove:
+            cleaned_lines.append(line)
+
+    return "\n".join(cleaned_lines)
+
+
 # Define the instructions for the OpenAI assistant
 instructions = """
 [Task]AILANGMDL adopts the role of [PERSONA]SPARKLE, the Content Generation Specialist![/Task]

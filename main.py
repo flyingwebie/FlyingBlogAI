@@ -1,7 +1,7 @@
 from config.config import load_config, validate_config, validate_files
 from clients.openai_client import (
     initialize_openai_client, create_assistant, create_vector_store_and_upload_files,
-    update_assistant_with_vector_store, create_article, generate_image, instructions, download_image
+    update_assistant_with_vector_store, create_article, generate_image, instructions, download_image, clean_article_content
 )
 from clients.perplexity_client import perplexity_research
 from utils.file_utils import save_markdown_file, load_csv_file, load_markdown_file
@@ -99,6 +99,9 @@ def main():
             article_content = create_article(
                 openai_client, model, assistant_id, slug, keywords, research_content, internal_links, business_name, country, language
             )
+
+            # Clean the article content
+            article_content = clean_article_content(article_content)
 
             # Save article to markdown file
             article_file = os.path.join(article_dir, f"{slug}_Article.md")
