@@ -125,7 +125,9 @@ def clean_article_content(content):
         "## Takeaway Points",
         "## Introduction",
         "## Main Content",
-        "## Details"
+        "## Details",
+        "## Conclusion",
+        "## FAQs"
     ]
 
     cleaned_lines = []

@@ -11,7 +11,10 @@ def str_to_bool(value):
 
 # Load configuration from .env file
 def load_config():
-    load_dotenv()
+
+    # TODO - Remove override=True
+    load_dotenv(override=True)
+
     config = {
         "OPENAI_API_KEY": os.getenv('OPENAI_API_KEY'),
         "MODEL": os.getenv('MODEL'),
@@ -23,11 +26,13 @@ def load_config():
         "WORDPRESS_PASSWORD": os.getenv('WORDPRESS_PASSWORD'),
         "WORDPRESS_API_URL": os.getenv('WORDPRESS_API_URL'),
         "UPLOAD_TO_WORDPRESS": str_to_bool(os.getenv('UPLOAD_TO_WORDPRESS', 'True')),
+        "WORDPRESS_POST_TYPE": os.getenv("WORDPRESS_POST_TYPE", "posts"),
         "BUSINESS_NAME": os.getenv('BUSINESS_NAME'),
         "COUNTRY": os.getenv('COUNTRY'),
         "LANGUAGE": os.getenv('LANGUAGE'),
         "GENERATE_IMAGES": os.getenv("GENERATE_IMAGES").lower() == "true"
     }
+
     return config
 
 # Validate configuration

@@ -4,6 +4,7 @@ from clients.openai_client import (
     update_assistant_with_vector_store, create_article, generate_image, instructions, download_image, clean_article_content
 )
 from clients.perplexity_client import perplexity_research
+from upload_to_wordpress import upload_articles_in_directory
 from utils.file_utils import save_markdown_file, load_csv_file, load_markdown_file
 from clients.wordpress_client import convert_markdown_to_html, upload_to_wordpress, save_html_file
 from utils.logging_utils import setup_logging, log_error, log_info
@@ -111,6 +112,11 @@ def main():
             html_content = convert_markdown_to_html(article_content)
             html_file = os.path.join(article_dir, f"{slug}_Article.html")
             save_html_file(html_file, html_content)
+            print(f"Article '{slug}' generated successfully.")
+            print("-------------------")
+
+            # Generate images with DALL-E 3 if enabled
+            print(f"Setting Generate Image: {config["GENERATE_IMAGES"]}")
 
             # Generate images with DALL-E 3 if enabled
             if config["GENERATE_IMAGES"]:
@@ -120,13 +126,16 @@ def main():
 
                 # Download the image from the URL and save it locally
                 download_image(image_url, image_file)
+                print(f"Image for article '{slug}' downlaod successfully.")
 
-            # Upload article to WordPress if enabled
-            if config["UPLOAD_TO_WORDPRESS"]:
-                upload_to_wordpress(
-                    config["WORDPRESS_USERNAME"], config["WORDPRESS_PASSWORD"],
-                    config["WORDPRESS_API_URL"], f"Article on {', '.join(keywords)}", html_content
-                )
+    # Upload articles to WordPress if enabled
+    if config["UPLOAD_TO_WORDPRESS"]:
+        articles_folder = 'articles'
+        if not os.listdir(articles_folder):
+            print("The 'articles' directory is empty. Start Generate new Articles.")
+            return
+        upload_articles_in_directory(articles_folder)
+        #subprocess.run(["python", "upload_to_wordpress.py"])
 
 if __name__ == "__main__":
     main()
