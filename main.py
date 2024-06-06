@@ -116,7 +116,7 @@ def main():
             print("-------------------")
 
             # Generate images with DALL-E 3 if enabled
-            print(f"Setting Generate Image: {config["GENERATE_IMAGES"]}")
+            print(f"Setting Generate Image: {config['GENERATE_IMAGES']}")
 
             # Generate images with DALL-E 3 if enabled
             if config["GENERATE_IMAGES"]:
