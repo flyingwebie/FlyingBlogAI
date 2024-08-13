@@ -1,23 +1,23 @@
 # FlyingBlogAI
 
-FlyingBlogAI is an automated tool designed to streamline the creation of blog posts. This tool utilizes OpenAI's GPT model to generate comprehensive articles based on given keywords and automatically saves them as drafts in WordPress. It also integrates Perplexity AI for conducting research to enhance the quality of the articles The generated articles are enriched with internal links and SEO-friendly content.
+FlyingBlogAI is an automated tool designed to streamline the creation of blog posts. This tool utilizes either OpenAI's GPT model or Anthropic's Claude model to generate comprehensive articles based on given keywords and automatically saves them as drafts in WordPress. It also integrates Perplexity AI for conducting research to enhance the quality of the articles. The generated articles are enriched with internal links and SEO-friendly content.
 
 ## Features
 
-- Generates high-quality blog articles using OpenAI's GPT-4.
+- Generates high-quality blog articles using either OpenAI's GPT-4 or Anthropic's Claude.
 - Conducts research using Perplexity API.
-- Generates images for articles using DALL-E 3.
+- Generates images for articles using DALL-E 3 (optional).
 - Handles internal linking using sitemap data.
 - Generates sitemaps for better SEO.
-- Uploads articles to WordPress
+- Uploads articles to WordPress (optional).
 
 ## Prerequisites
 
 - Docker and Docker Compose installed on your machine.
 - Python 3.10 or later.
-- An OpenAI API key.
+- An OpenAI API key or Claude API key (depending on your chosen AI provider).
 - A Perplexity API key.
-- WordPress credentials and API URL for uploading drafts.
+- WordPress credentials and API URL for uploading drafts (if using WordPress integration).
 
 ## Requirements
 
@@ -75,9 +75,16 @@ If you don't have these installed, here are some resources to help you get start
    COUNTRY=your_country
    LANGUAGE=your_language
 
+   # AI Provider Selection (openai or claude)
+   AI_PROVIDER=your_chosen_provider
+
    # OpenAI API key for accessing OpenAI services
    OPENAI_API_KEY=your_openai_api_key
-   MODEL=your_openai_model
+   OPENAI_MODEL=your_openai_model
+
+   # Claude API key and model
+   CLAUDE_API_KEY=your_claude_api_key
+   CLAUDE_MODEL=your_claude_model
 
    # Perplexity API key for conducting research
    PERPLEXITY_API_KEY=your_perplexity_api_key
@@ -97,7 +104,8 @@ If you don't have these installed, here are some resources to help you get start
    # WordPress credentials and API URL for uploading drafts
    WORDPRESS_USERNAME=your_wordpress_username
    WORDPRESS_PASSWORD=your_wordpress_password
-   WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2/posts
+   WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2
+   WORDPRESS_POST_TYPE=your_post_type
 
    # Generate images for articles with DALL-E 3
    GENERATE_IMAGES=true # true or false
@@ -105,15 +113,17 @@ If you don't have these installed, here are some resources to help you get start
 
 ## Usage
 
-Once the application is running, it will automatically start processing the articles listed in `articles.csv`, conducting research using Perplexity AI, generating content using OpenAI, and optionally uploading the drafts to your WordPress site.
+Once the application is running, it will automatically start processing the articles listed in `articles.csv`, conducting research using Perplexity AI, generating content using the selected AI provider (OpenAI or Claude), and optionally uploading the drafts to your WordPress site.
 
 ### Running the Main Script
 
-To generate articles and publish them to WordPress:
+To generate articles and optionally publish them to WordPress:
 
 ```bash
 python main.py
 ```
+
+The script will use the AI provider specified in the `AI_PROVIDER` environment variable (either "openai" or "claude").
 
 ### Generating Sitemap
 
@@ -136,7 +146,7 @@ articles/
         ├── slug_perplexity.md
         ├── slug_Article.md
         └── slug_Article.html
-        └── slug_image.png
+        └── slug_image.png (if GENERATE_IMAGES is true)
 ```
 
 Where `YYYY-MM-DD` represents the date the article was created, and `slug-article` represents the slug of the article.
@@ -144,8 +154,9 @@ Where `YYYY-MM-DD` represents the date the article was created, and `slug-articl
 ## Additional Notes
 
 - Ensure that the `data` directory contains the necessary input files (`knowledge_profile.json`, `articles.csv`, `sitemap_index.txt`).
-- The generated articles, images, and sitemaps will be stored in the `articles` directory with subdirectories organized by date and slug.
+- The generated articles, images (if enabled), and sitemaps will be stored in the `articles` directory with subdirectories organized by date and slug.
 - Make sure to update your `.env` file with correct API keys and configuration details before running the scripts.
+- You can switch between OpenAI and Claude by changing the `AI_PROVIDER` value in the `.env` file.
 
 ## Contributing
 

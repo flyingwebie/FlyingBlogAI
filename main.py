@@ -1,7 +1,8 @@
 from config.config import load_config, validate_config, validate_files
+from clients.ai_client import initialize_ai_client, create_article, get_ai_model
 from clients.openai_client import (
-    initialize_openai_client, create_assistant, create_vector_store_and_upload_files,
-    update_assistant_with_vector_store, create_article, generate_image, instructions, download_image, clean_article_content
+    create_assistant, create_vector_store_and_upload_files,
+    update_assistant_with_vector_store, generate_image, instructions, download_image, clean_article_content
 )
 from clients.perplexity_client import perplexity_research
 from upload_to_wordpress import upload_articles_in_directory
@@ -26,15 +27,15 @@ def main():
         log_error("File validation failed. Exiting.")
         return
 
-    # Initialize OpenAI client
-    openai_client = initialize_openai_client(config["OPENAI_API_KEY"])
-    model = config["MODEL"]
+    # Initialize AI client based on the selected provider
+    ai_client = initialize_ai_client()
+    model = get_ai_model()
 
-    # Create or use existing OpenAI assistant
+    # Create or use existing OpenAI assistant (only for OpenAI)
     assistant_id = config.get("OPENAI_ASSISTANT_ID")
-    if not assistant_id:
+    if config["AI_PROVIDER"].lower() == "openai" and not assistant_id:
         assistant_id = create_assistant(
-            openai_client,
+            ai_client,
             name=config.get("BUSINESS_NAME"),
             instructions=instructions,
             model=model
@@ -76,29 +77,29 @@ def main():
             research_file = os.path.join(article_dir, f"{slug}_perplexity.md")
             save_markdown_file(research_file, research_content)
 
-            # Create a vector store and upload files (knowledge profile, example article, sitemap, and research files)
-            file_paths = [
-                config["KNOWLEDGE_PROFILE_JSON"],
-                'data/example_article.md',
-                sitemap_txt_path,
-                research_file
-            ]
-
-            vector_store_id = create_vector_store_and_upload_files(openai_client, file_paths, business_name=config["BUSINESS_NAME"])
-
-            # Update assistant to use the vector store
-            update_assistant_with_vector_store(openai_client, assistant_id, vector_store_id)
+            # Create a vector store and upload files (only for OpenAI)
+            if config["AI_PROVIDER"].lower() == "openai":
+                file_paths = [
+                    config["KNOWLEDGE_PROFILE_JSON"],
+                    'data/example_article.md',
+                    sitemap_txt_path,
+                    research_file
+                ]
+                vector_store_id = create_vector_store_and_upload_files(ai_client, file_paths, business_name=config["BUSINESS_NAME"])
+                update_assistant_with_vector_store(ai_client, assistant_id, vector_store_id)
 
             # Parse sitemap for internal links
             sitemap_path = 'data/sitemap_index.xml'
             internal_links = parse_sitemap(sitemap_path)
 
-            # Generate article using OpenAI assistant
+            # Generate article using the selected AI provider
             business_name = config["BUSINESS_NAME"]
             country = config["COUNTRY"]
             language = config["LANGUAGE"]
             article_content = create_article(
-                openai_client, model, assistant_id, slug, keywords, research_content, internal_links, business_name, country, language
+                ai_client, model=model, assistant_id=assistant_id, slug=slug, keywords=keywords,
+                research_content=research_content, internal_links=internal_links,
+                business_name=business_name, country=country, language=language
             )
 
             # Clean the article content
@@ -115,18 +116,15 @@ def main():
             print(f"Article '{slug}' generated successfully.")
             print("-------------------")
 
-            # Generate images with DALL-E 3 if enabled
-            print(f"Setting Generate Image: {config['GENERATE_IMAGES']}")
-
-            # Generate images with DALL-E 3 if enabled
-            if config["GENERATE_IMAGES"]:
+            # Generate images with DALL-E 3 if enabled (only for OpenAI)
+            if config["GENERATE_IMAGES"] and config["AI_PROVIDER"].lower() == "openai":
                 image_prompt = f"Create a realistic picture that visually represents the content described by the article slug: '{slug}'. The image should be detailed, lifelike, and appropriate for a blog post."
-                image_url = generate_image(openai_client, image_prompt)
+                image_url = generate_image(ai_client, image_prompt)
                 image_file = os.path.join(article_dir, f"{slug}_image.png")
 
                 # Download the image from the URL and save it locally
                 download_image(image_url, image_file)
-                print(f"Image for article '{slug}' downlaod successfully.")
+                print(f"Image for article '{slug}' downloaded successfully.")
 
     # Upload articles to WordPress if enabled
     if config["UPLOAD_TO_WORDPRESS"]:
@@ -135,7 +133,6 @@ def main():
             print("The 'articles' directory is empty. Start Generate new Articles.")
             return
         upload_articles_in_directory(articles_folder)
-        #subprocess.run(["python", "upload_to_wordpress.py"])
 
 if __name__ == "__main__":
     main()

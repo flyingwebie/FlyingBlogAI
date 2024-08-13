@@ -60,7 +60,8 @@ def upload_to_wordpress(username, password, api_url, title, content, featured_im
         'content': content,
         'status': 'draft',
         'slug': slug,
-        'type': post_type
+        'type': post_type,
+        'parent': '46'
     }
 
     if featured_image_id:

@@ -5,3 +5,4 @@ tqdm==4.64.1
 markdown==3.3.7
 beautifulsoup4==4.9.3
 markdown2==2.4.13
+anthropic==0.33.1

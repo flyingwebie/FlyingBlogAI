@@ -1,87 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="//www.flyingweb.ie/main-sitemap.xsl"?>
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="//www.example.ie/main-sitemap.xsl"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://www.flyingweb.ie/website-services/</loc>
+        <loc>https://www.example.com/</loc>
     </url>
     <url>
-        <loc>https://www.flyingweb.ie/service/website-design/</loc>
+        <loc>https://www.example.com/about-us/</loc>
     </url>
     <url>
-        <loc>https://www.flyingweb.ie/service/seo/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/service/digital-marketing/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/service/website-support/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/testimonials/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/blog/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/login/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/account/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/thank-you-2/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/links/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/about-us/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/contact-us/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/inquiry/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/sitemap/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/privacy-policy/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/website/evolution-web-design-late-1980s-1990s/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/website/website-maintenance-crucial-business/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/design/craft-a-powerful-brand-identity-5-essential-design-elements/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/business/website-maintenance-cost/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/marketing/why-ppc-audience-targeting-is-crucial-to-the-success-of-your-campaign/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/design/5-advantages-of-integrating-bespoke-web-design-for-companies/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/marketing/5-key-strategies-to-improve-your-brand-identity-in-2023/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/business/2-impressive-reasons-why-you-should-have-seo-audit/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/marketing/digital-marketing-mistakes-to-avoid/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/design/7-mistakes-that-web-designer-makes/</loc>
-    </url>
-    <url>
-        <loc>https://www.flyingweb.ie/business/website-design-cost-in-ireland/</loc>
+        <loc>https://www.example.com/contact-us</loc>
     </url>
 </urlset>
