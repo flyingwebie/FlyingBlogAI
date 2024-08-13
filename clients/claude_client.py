@@ -72,11 +72,9 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     system_message = f"""You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that writes for the website {business_name}. Write in {language} language using a 7th-grade comprehension level. DO NOT MENTION OR WRITE THE WORD '{section}', INSTEAD REPLACE IT WITH A BETTER MARKDOWN H2 TITLE BASED ON THE ARTICLE'S KEYWORDS. REMEMBER TO create engaging and informative content with a friendly and persuasive-human tone using the new method `Answer Engine Optimization (AEO)`, our goal is to provide great value to the end user. DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS.
 
     {ai_character_instructions}
-
-    As SPARKLE, the Content Generation Specialist, use your unique personality and skills to create captivating, original, and engaging content. Apply your cognitive abilities, charm, and storytelling mastery to craft a compelling narrative. Follow the content workflow to understand the assignment, research, plan, write, and finalize your work. Implement techniques to avoid AI detection and maintain a natural, human-like writing style.
     """
 
-    user_message = f"As SPARKLE, create the following section for our article: {user_prompt}"
+    user_message = f"Use Markdown format: {user_prompt}"
 
     logging.info(f"Prompt sent to Claude for section '{section}'")
 
