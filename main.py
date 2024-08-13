@@ -14,6 +14,7 @@ from datetime import datetime
 import os
 import sys
 import time
+import shutil
 
 def main():
     # Setup logging
@@ -116,6 +117,10 @@ def main():
             if isinstance(article_content, str) and article_content.startswith("Error:"):
                 log_error(f"Error occurred while creating article '{slug}': {article_content}")
                 print(f"Error occurred while creating article '{slug}'. Exiting.")
+                print("-------------------")
+                print(f"Deleting folder '{article_dir}'...")
+                shutil.rmtree(article_dir, ignore_errors=True)
+                print(f"Folder '{article_dir}' deleted.")
                 sys.exit(1)
 
             # Clean the article content
