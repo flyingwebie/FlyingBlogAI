@@ -45,7 +45,8 @@ def main():
 
     # Create a directory for today's date
     today = datetime.today().strftime('%Y-%m-%d')
-    articles_dir = os.path.join('articles', today)
+    ai_provider = config["AI_PROVIDER"].lower()
+    articles_dir = os.path.join('articles', ai_provider, today)
     os.makedirs(articles_dir, exist_ok=True)
 
     # Load articles CSV
