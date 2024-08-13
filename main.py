@@ -12,6 +12,8 @@ from utils.logging_utils import setup_logging, log_error, log_info
 from utils.sitemap_utils import parse_sitemap, parse_sitemap_to_txt
 from datetime import datetime
 import os
+import sys
+import time
 
 def main():
     # Setup logging
@@ -55,7 +57,7 @@ def main():
     parse_sitemap_to_txt(sitemap_xml_path, sitemap_txt_path)
 
     # Process each article
-    for article in articles:
+    for index, article in enumerate(articles):
         slug = article['slug']
         keywords = article['keywords'].split(';')
 
@@ -102,6 +104,12 @@ def main():
                 business_name=business_name, country=country, language=language
             )
 
+            # Check if an error occurred during article creation
+            if isinstance(article_content, str) and article_content.startswith("Error:"):
+                log_error(f"Error occurred while creating article '{slug}': {article_content}")
+                print(f"Error occurred while creating article '{slug}'. Exiting.")
+                sys.exit(1)
+
             # Clean the article content
             article_content = clean_article_content(article_content)
 
@@ -125,6 +133,11 @@ def main():
                 # Download the image from the URL and save it locally
                 download_image(image_url, image_file)
                 print(f"Image for article '{slug}' downloaded successfully.")
+
+        # Implement timeout for Claude
+        if config["AI_PROVIDER"].lower() == "claude" and index < len(articles) - 1:
+            print("Waiting for 10 minutes before processing the next article...")
+            time.sleep(600)  # 600 seconds = 10 minutes
 
     # Upload articles to WordPress if enabled
     if config["UPLOAD_TO_WORDPRESS"]:

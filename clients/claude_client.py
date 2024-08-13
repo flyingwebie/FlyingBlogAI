@@ -32,6 +32,8 @@ def create_article(client, model, assistant_id, slug, keywords, research_content
             country=country,
             language=language
         )
+        if isinstance(section_content, str) and section_content.startswith("Error:"):
+            return section_content  # Return the error if found
         article_content += f"{section_content}\n\n"
 
     return article_content
@@ -91,8 +93,9 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
         logging.info(f"Section '{section}' created successfully.")
         return section_content
     except Exception as e:
-        logging.error(f"Error creating section '{section}': {str(e)}")
-        return f"Error creating {section}: {str(e)}"
+        error_message = f"Error: Failed to create section '{section}': {str(e)}"
+        logging.error(error_message)
+        return error_message
 
 def clean_article_content(content):
     lines_to_remove = [
