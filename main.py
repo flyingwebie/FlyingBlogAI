@@ -64,6 +64,13 @@ def main():
 
         # Create a directory for each article using its slug
         article_dir = os.path.join(articles_dir, slug)
+
+        # Check if the article directory already exists
+        if os.path.exists(article_dir):
+            print(f"Article directory for '{slug}' already exists. Skipping this article.")
+            continue
+
+        # If the directory doesn't exist, create it and process the article
         os.makedirs(article_dir, exist_ok=True)
 
         # Conduct Perplexity research for each keyword
@@ -138,7 +145,7 @@ def main():
         # Implement timeout for Claude
         if config["AI_PROVIDER"].lower() == "claude" and index < len(articles) - 1:
             print("Waiting for 10 minutes before processing the next article...")
-            time.sleep(600)  # 600 seconds = 10 minutes
+            time.sleep(300)  # 300 seconds = 5 minutes
 
     # Upload articles to WordPress if enabled
     if config["UPLOAD_TO_WORDPRESS"]:
