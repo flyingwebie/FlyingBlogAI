@@ -38,8 +38,8 @@ def create_article(client, model, assistant_id, slug, keywords, research_content
 
 def create_section_content(client, model, assistant_id, slug, keywords, section, research_content, internal_links, business_name, country, language):
     section_prompts = {
-        "Catchy Blog Title": f"JUST WRITE THE TITLE H1 - DO NOT WRITE 'Catchy Blog Title'. Generate a markdown H1 title of a max 60 characters based on the slug {slug}. Use the research content to generate the best SEO title for this article. IMPORTANT STICK TO THE INTRODUCTION.",
-        "Takeaway Points": f"Create a list of maximum of 3 bullet points as `Key takeaway points`. Use the research content to identify the main points. DO NOT WRITE ANY CONCLUSION - STICK TO THE INTRODUCTION.",
+        "Catchy Blog Title": f"JUST WRITE THE TITLE H1 - DO NOT WRITE 'Catchy Blog Title'. Generate a markdown H1 title of a max 60 characters based on the slug {slug}. IMPORTANT STICK TO THE INTRODUCTION.",
+        "Takeaway Points": f"Create a list of 3 or 5 bullet points as `Key takeaway points` using the {research_content} to identify the main article's take away. DO NOT WRITE ANY CONCLUSION - STICK TO THE INTRODUCTION.",
         "Introduction": f"Write an engaging and catchy introduction with a friendly and persuasive-human tone for the article about {slug} and why it's important to keep reading the article. Make the concept easier to understand for our audience. Use the research content to provide a short overview of the article. DO NOT WRITE ANY CONCLUSION - STICK TO THE INTRODUCTION.",
         "Main Content": f"Expand on the main content of the article about {slug}. Provide useful information and explanations mentioning the following questions: {', '.join(keywords)}. Use the research content and include relevant internal links {internal_links} using the Answer Engine Optimization (AEO) which you are an expert on and use the SEO context and the knowledge base of our website {business_name}. DO NOT WRITE ANY CONCLUSION - STICK TO THE MAIN CONTENT.",
         "Conclusion": f"Write a strong 'Conclusion' or 'Final Thoughts' for the article about {slug} using the Research Content. Summarize the most critical points and provide a short final takeaway using the Answer Engine Optimization (AEO) which you are an expert on. STICK TO THE CONCLUSION.",
@@ -74,7 +74,7 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     {ai_character_instructions}
     """
 
-    user_message = f"Use Markdown format: {user_prompt}"
+    user_message = f"Please, just write the content, no not add any content and use Markdown format: {user_prompt}"
 
     logging.info(f"Prompt sent to Claude for section '{section}'")
 
