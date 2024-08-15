@@ -1,5 +1,7 @@
 import logging
-from anthropic import Anthropic
+import random
+import time
+from anthropic import Anthropic, APIStatusError, APITimeoutError, APIConnectionError, RateLimitError
 
 def initialize_claude_client(api_key):
     client = Anthropic(api_key=api_key)
@@ -17,6 +19,7 @@ def create_article(client, model, assistant_id, slug, keywords, research_content
     ]
 
     article_content = ""
+    delay_between_requests = 60  # 2 seconds delay between requests
 
     for section in sections:
         section_content = create_section_content(
@@ -35,6 +38,10 @@ def create_article(client, model, assistant_id, slug, keywords, research_content
         if isinstance(section_content, str) and section_content.startswith("Error:"):
             return section_content  # Return the error if found
         article_content += f"{section_content}\n\n"
+
+        # Add delay between requests
+        print(f"Waiting for {delay_between_requests} seconds before the next request...")
+        time.sleep(delay_between_requests)
 
     return article_content
 
@@ -71,31 +78,47 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     [CntGnWkflw]:1.[CntxtAnlyss]: 1a.IdPurps→2a,3a 1b.DfTpics→2b,3b 1c.CrtvDrctn→2c,3c 2.[TskFrmt]: 2a.SctnGdlns→3a,4a 2b.TpcDpth→3b,5a 2c.DsrdLng→3c,4b,5b 3.[AplTech]: 3a.Implmnt 〔AvdAIDtct〕 →7a,7b 3b.UtilzUnqVc→4a,6a 3c.Mntn12yoComprhn→5b,6b 4.[ShrtPnchyStl]: 4a.PnchnssEncrg→5a,6a 4b.WrtngTchnqs→5b,6b 5.[EdtEnhnc]: 5a.FcsOrgnlty→8a 5b.SmplfyLng→8b 6.[HmnCrtvty]: 6a.IncrprtLfExprnc→8a 6b.RlyEmtns→8b 7.[FrmtOtpt]: 7a.AsmbSctns→8a 7b.VrfyGdlnsMt→8b 8.[FnlRvw]: 8a.CntntEval→_Rslt_ 8b.FdbkLp→_Itrtn_
     """
 
-    system_message = f"""You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that writes for the website {business_name}. Write in {language} language using a 7th-grade comprehension level. DO NOT MENTION OR WRITE THE WORD '{section}', INSTEAD REPLACE IT WITH A BETTER MARKDOWN H2 TITLE BASED ON THE ARTICLE'S KEYWORDS. REMEMBER TO create engaging and informative content with a friendly and persuasive-human tone using the new method `Answer Engine Optimization (AEO)`, our goal is to provide great value to the end user. DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS.
-
-    {ai_character_instructions}
-    """
+    system_message = f"You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that writes for the website {business_name}. Write in {language} language using a 7th-grade comprehension level. {ai_character_instructions}"
 
     user_message = f"Please, just write the content, no not add any content and use Markdown format: {user_prompt}"
 
     logging.info(f"Prompt sent to Claude for section '{section}'")
 
-    try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=2048,
-            system=system_message,
-            messages=[
-                {"role": "user", "content": user_message}
-            ]
-        )
-        section_content = response.content[0].text
-        logging.info(f"Section '{section}' created successfully.")
-        return section_content
-    except Exception as e:
-        error_message = f"Error: Failed to create section '{section}': {str(e)}"
-        logging.error(error_message)
-        return error_message
+    max_retries = 5
+    base_delay = 30  # starting delay of 1 second
+
+    for attempt in range(max_retries):
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=2048,
+                system=system_message,
+                messages=[
+                    {"role": "user", "content": user_message}
+                ]
+            )
+            section_content = response.content[0].text
+            logging.info(f"Section '{section}' created successfully.")
+            return section_content
+
+        except (APIStatusError, APITimeoutError, APIConnectionError) as e:
+            if attempt == max_retries - 1:
+                error_message = f"Error: Failed to create section '{section}' after {max_retries} attempts: {str(e)}"
+                logging.error(error_message)
+                return error_message
+
+            delay = base_delay * (2 ** attempt) + random.uniform(0, 0.1 * (2 ** attempt))
+            logging.warning(f"Error occurred: {str(e)}. Retrying in {delay:.2f} seconds...")
+            time.sleep(delay)
+
+        except RateLimitError as e:
+            logging.warning(f"Rate limit reached. Waiting for {e.retry_after} seconds before retrying...")
+            time.sleep(e.retry_after)
+
+        except Exception as e:
+            error_message = f"Unexpected error: Failed to create section '{section}': {str(e)}"
+            logging.error(error_message)
+            return error_message
 
 def clean_article_content(content):
     lines_to_remove = [
