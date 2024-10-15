@@ -1,21 +1,25 @@
 # FlyingBlogAI
 
-FlyingBlogAI is an automated tool designed to streamline the creation of blog posts. This tool utilizes either OpenAI's GPT model or Anthropic's Claude model to generate comprehensive articles based on given keywords and automatically saves them as drafts in WordPress. It also integrates Perplexity AI for conducting research to enhance the quality of the articles. The generated articles are enriched with internal links and SEO-friendly content.
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg) ![Docker](https://img.shields.io/badge/Docker-Supported-brightgreen)
+
+FlyingBlogAI is an automated tool designed to streamline the creation of blog posts. This tool utilizes either OpenAI's GPT model, Anthropic's Claude model, or FAL AI to generate comprehensive articles based on given keywords and automatically saves them as drafts in WordPress. It also integrates Perplexity AI for conducting research to enhance the quality of the articles. The generated articles are enriched with internal links and SEO-friendly content.
 
 ## Features
 
-- Generates high-quality blog articles using either OpenAI's GPT-4 or Anthropic's Claude.
-- Conducts research using Perplexity API.
-- Generates images for articles using DALL-E 3 (optional).
+- Generates high-quality blog articles using either OpenAI's GPT-4, Anthropic's Claude, or FAL AI.
+- Conducts research using Perplexity API to enhance article content.
+- Generates images for articles using DALL-E 3 or FAL AI (optional).
 - Handles internal linking using sitemap data.
 - Generates sitemaps for better SEO.
 - Uploads articles to WordPress (optional).
+- Supports multiple AI providers for both text and image generation.
+- Asynchronous image generation for improved performance.
 
 ## Prerequisites
 
-- Docker and Docker Compose installed on your machine.
+- Docker and Docker Compose installed on your machine (optional, for containerized deployment).
 - Python 3.10 or later.
-- An OpenAI API key or Claude API key (depending on your chosen AI provider).
+- API keys for your chosen AI providers (OpenAI, Claude, FAL AI).
 - A Perplexity API key.
 - WordPress credentials and API URL for uploading drafts (if using WordPress integration).
 
@@ -23,15 +27,9 @@ FlyingBlogAI is an automated tool designed to streamline the creation of blog po
 
 To run FlyingBlogAI, you will need the following software installed on your system:
 
-- **Python**: Version 3.9 or higher. Python is a programming language required to run the scripts.
-- **Docker**: Optional. Docker is used to containerize the application, making it easier to run without worrying about the environment setup.
-- **Git**: Optional. Git is a version control system used to clone the repository. You can also download the repository as a ZIP file if you prefer.
-
-If you don't have these installed, here are some resources to help you get started:
-
-- [Download Python](https://www.python.org/downloads/)
-- [Download Docker](https://www.docker.com/get-started)
-- [Download Git](https://git-scm.com/downloads)
+- **Python**: Version 3.10 or higher.
+- **Docker**: Optional, for containerized deployment.
+- **Git**: Optional, for cloning the repository.
 
 ## Installation
 
@@ -75,45 +73,41 @@ If you don't have these installed, here are some resources to help you get start
    COUNTRY=your_country
    LANGUAGE=your_language
 
-   # AI Provider Selection (openai or claude)
+   # AI Provider Selection (openai, claude, or fal)
    AI_PROVIDER=your_chosen_provider
+   IMAGE_PROVIDER=your_chosen_image_provider
 
-   # OpenAI API key for accessing OpenAI services
+   # API Keys
    OPENAI_API_KEY=your_openai_api_key
-   OPENAI_MODEL=your_openai_model
-
-   # Claude API key and model
    CLAUDE_API_KEY=your_claude_api_key
-   CLAUDE_MODEL=your_claude_model
-
-   # Perplexity API key for conducting research
+   FAL_API_KEY=your_fal_api_key
    PERPLEXITY_API_KEY=your_perplexity_api_key
 
-   # OpenAI Assistant ID for creating and managing the assistant (OPTIONAL)
+   # AI Models
+   OPENAI_MODEL=your_openai_model
+   CLAUDE_MODEL=your_claude_model
+
+   # OpenAI Assistant ID (OPTIONAL)
    OPENAI_ASSISTANT_ID=your_openai_assistant_id
 
-   # Path to the JSON file containing the company's knowledge profile
+   # File Paths
    KNOWLEDGE_PROFILE_JSON=data/knowledge_profile.json
-
-   # Path to the CSV file with slugs and keywords for articles
    ARTICLES_CSV=data/articles.csv
 
-   # Flag to control whether to upload articles to WordPress
-   UPLOAD_TO_WORDPRESS=true # true or false
-
-   # WordPress credentials and API URL for uploading drafts
+   # WordPress Configuration
+   UPLOAD_TO_WORDPRESS=true
    WORDPRESS_USERNAME=your_wordpress_username
    WORDPRESS_PASSWORD=your_wordpress_password
    WORDPRESS_API_URL=https://yourwordpresssite.com/wp-json/wp/v2
    WORDPRESS_POST_TYPE=your_post_type
 
-   # Generate images for articles with DALL-E 3
-   GENERATE_IMAGES=true # true or false
+   # Image Generation
+   GENERATE_IMAGES=true
    ```
 
 ## Usage
 
-Once the application is running, it will automatically start processing the articles listed in `articles.csv`, conducting research using Perplexity AI, generating content using the selected AI provider (OpenAI or Claude), and optionally uploading the drafts to your WordPress site.
+Once the application is running, it will automatically start processing the articles listed in `articles.csv`, conducting research using Perplexity AI, generating content using the selected AI provider, and optionally uploading the drafts to your WordPress site.
 
 ### Running the Main Script
 
@@ -123,7 +117,7 @@ To generate articles and optionally publish them to WordPress:
 python main.py
 ```
 
-The script will use the AI provider specified in the `AI_PROVIDER` environment variable (either "openai" or "claude").
+The script will use the AI provider specified in the `AI_PROVIDER` environment variable (either "openai", "claude", or "fal").
 
 ### Generating Sitemap
 
@@ -156,7 +150,7 @@ Where `YYYY-MM-DD` represents the date the article was created, and `slug-articl
 - Ensure that the `data` directory contains the necessary input files (`knowledge_profile.json`, `articles.csv`, `sitemap_index.txt`).
 - The generated articles, images (if enabled), and sitemaps will be stored in the `articles` directory with subdirectories organized by date and slug.
 - Make sure to update your `.env` file with correct API keys and configuration details before running the scripts.
-- You can switch between OpenAI and Claude by changing the `AI_PROVIDER` value in the `.env` file.
+- You can switch between OpenAI, Claude, and FAL AI by changing the `AI_PROVIDER` value in the `.env` file.
 
 ## Contributing
 
