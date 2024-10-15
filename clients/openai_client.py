@@ -5,6 +5,7 @@ import requests
 import re
 from data.excluded_phrases import EXCLUDED_PHRASES
 
+
 def initialize_openai_client(api_key):
     client = OpenAI(api_key=api_key)
     logging.info("OpenAI client initialized.")
@@ -105,17 +106,6 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     section_content = response.choices[0].message.content
     logging.info(f"Section '{section}' created successfully.")
     return section_content
-
-def generate_image(client, prompt):
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=prompt,
-        size="1024x1024",
-        quality="hd",
-        n=1,
-    )
-    image_url = response.data[0].url
-    return image_url
 
 def download_image(image_url, save_path):
     response = requests.get(image_url)
