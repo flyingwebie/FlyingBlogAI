@@ -1,5 +1,5 @@
 from config.config import load_config, validate_config, validate_files
-from clients.ai_client import initialize_ai_client, create_article, get_ai_model
+from clients.ai_client import initialize_ai_client, create_article, get_ai_model, initialize_image_client
 from clients.openai_client import (
     create_assistant, create_vector_store_and_upload_files,
     update_assistant_with_vector_store, instructions, download_image, clean_article_content
@@ -36,6 +36,7 @@ def main():
 
     # Initialize AI client based on the selected provider
     ai_client = initialize_ai_client()
+    image_client = initialize_image_client()
     model = get_ai_model()
 
     # Create or use existing OpenAI assistant (only for OpenAI)
@@ -144,7 +145,7 @@ def main():
             # Generate images with DALL-E 3 if enabled
             if config["GENERATE_IMAGES"]:
                 image_prompt = f"Create a realistic picture that visually represents the content described by the article slug: '{slug}'. The image should be detailed, lifelike, and appropriate for a blog post."
-                image_url = generate_image('openai', image_prompt)
+                image_url = generate_image(image_client, image_prompt)
                 image_file = os.path.join(article_dir, f"{slug}_image.png")
 
                 # Download the image from the URL and save it locally

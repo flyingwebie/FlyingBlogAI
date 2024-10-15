@@ -5,6 +5,15 @@ from clients.claude_client import initialize_claude_client, create_article as cr
 
 load_dotenv()
 
+def initialize_image_client():
+    image_provider = os.getenv("IMAGE_PROVIDER", "openai").lower()
+
+    if image_provider == "openai":
+        api_key = os.getenv("OPENAI_API_KEY")
+        return initialize_openai_client(api_key)
+    else:
+        raise ValueError(f"Unsupported image provider: {image_provider}")
+
 def initialize_ai_client():
     ai_provider = os.getenv("AI_PROVIDER", "openai").lower()
 
