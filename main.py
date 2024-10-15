@@ -10,14 +10,42 @@ from utils.file_utils import save_markdown_file, load_csv_file, load_markdown_fi
 from clients.wordpress_client import convert_markdown_to_html, upload_to_wordpress, save_html_file
 from utils.logging_utils import setup_logging, log_error, log_info
 from utils.sitemap_utils import parse_sitemap, parse_sitemap_to_txt
-from clients.image_utils import generate_image_sync
+from clients.image_utils import generate_image_sync, generate_image_openai, generate_image_fal
 from datetime import datetime
 import os
 import sys
 import time
 import shutil
+import asyncio
+import requests
 
-def main():
+async def generate_and_save_image(image_client, slug, article_dir, image_provider):
+    image_prompt = f"Create a realistic picture that visually represents the content described by the article slug: '{slug}'. The image should be detailed, lifelike, and appropriate for a blog post."
+
+    try:
+        if image_provider == "fal":
+            image_url = await generate_image_fal(image_client, image_prompt)
+        elif image_provider == "openai":
+            image_url = generate_image_openai(image_client, image_prompt)
+        else:
+            raise ValueError(f"Unsupported image provider: {image_provider}")
+
+        image_file = os.path.join(article_dir, f"{slug}_image.png")
+        download_image(image_url, image_file)
+        print(f"Image for article '{slug}' generated and saved successfully.")
+    except Exception as e:
+        print(f"Error generating or saving image for '{slug}': {str(e)}")
+
+def download_image(url, file_path):
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(file_path, 'wb') as file:
+            file.write(response.content)
+        print(f"Image saved to: {file_path}")
+    else:
+        print(f"Failed to download image. Status code: {response.status_code}")
+
+async def main():
     # Setup logging
     setup_logging()
 
@@ -142,20 +170,14 @@ def main():
             print(f"Article '{slug}' generated successfully.")
             print("-------------------")
 
-            # Generate images if enabled
+            # Generate and save image if enabled
             if config["GENERATE_IMAGES"]:
-                image_prompt = f"Create a realistic picture that visually represents the content described by the article slug: '{slug}'. The image should be detailed, lifelike, and appropriate for a blog post."
-                image_url = generate_image_sync(image_client, image_prompt, provider=config["IMAGE_PROVIDER"].lower())
-                image_file = os.path.join(article_dir, f"{slug}_image.png")
-
-                # Download the image from the URL and save it locally
-                download_image(image_url, image_file)
-                print(f"Image for article '{slug}' downloaded successfully.")
+                await generate_and_save_image(image_client, slug, article_dir, config["IMAGE_PROVIDER"].lower())
 
         # Implement timeout for Claude
         if config["AI_PROVIDER"].lower() == "claude" and index < len(articles) - 1:
             print(f"Waiting for {TIME_DELAY} seconds before processing the next article...")
-            time.sleep(TIME_DELAY)
+            await asyncio.sleep(TIME_DELAY)  # Use asyncio.sleep instead of time.sleep
 
     # Upload articles to WordPress if enabled
     if config["UPLOAD_TO_WORDPRESS"]:
@@ -166,4 +188,4 @@ def main():
         upload_articles_in_directory(articles_folder)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

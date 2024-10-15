@@ -8,12 +8,19 @@ async def generate_image_fal(client, prompt):
         "fal-ai/flux/dev",
         arguments={
             "prompt": prompt,
-            "model_name": "stabilityai/stable-diffusion-xl-base-1.0",
             "image_size": "square_hd",
         },
     )
     result = handler.get()
-    return result.images[0].url
+
+    # Print the result for debugging
+    print("Fal API Response:", result)
+
+    # Check if the result is a dictionary and has an 'images' key
+    if isinstance(result, dict) and 'images' in result:
+        return result['images'][0]['url']
+    else:
+        raise ValueError(f"Unexpected response format from Fal API: {result}")
 
 def generate_image_openai(client, prompt):
     response = client.images.generate(
