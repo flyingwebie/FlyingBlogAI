@@ -11,8 +11,7 @@ async def generate_image(client, prompt, provider="openai"):
             n=1,
         )
         image_url = response.data[0].url
-    elif provider == "fla":
-        # Assuming fal_client is the correct Python client for FAL.AI
+    elif provider == "fal":  # Corrected from "fla" to "fal"
         handler = fal_client.submit(
             "fal-ai/flux/dev",
             arguments={

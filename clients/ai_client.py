@@ -12,8 +12,7 @@ def initialize_image_client():
     if image_provider == "openai":
         api_key = os.getenv("OPENAI_API_KEY")
         return initialize_openai_client(api_key)
-    elif image_provider == "fla":
-        # Assuming fal_client is the correct Python client for FAL.AI
+    elif image_provider == "fal":  # Corrected from "fla" to "fal"
         fal_client.config({
             "credentials": os.getenv("FAL_API_KEY")
         })
