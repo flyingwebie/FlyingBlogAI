@@ -12,10 +12,8 @@ def initialize_image_client():
     if image_provider == "openai":
         api_key = os.getenv("OPENAI_API_KEY")
         return initialize_openai_client(api_key)
-    elif image_provider == "fal":  # Corrected from "fla" to "fal"
-        fal_client.config({
-            "credentials": os.getenv("FAL_API_KEY")
-        })
+    elif image_provider == "fal":
+        # Initialize FAL.AI client without config
         return fal_client
     else:
         raise ValueError(f"Unsupported image provider: {image_provider}")
