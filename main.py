@@ -10,7 +10,7 @@ from utils.file_utils import save_markdown_file, load_csv_file, load_markdown_fi
 from clients.wordpress_client import convert_markdown_to_html, upload_to_wordpress, save_html_file
 from utils.logging_utils import setup_logging, log_error, log_info
 from utils.sitemap_utils import parse_sitemap, parse_sitemap_to_txt
-from clients.image_utils import generate_image
+from clients.image_utils import generate_image_sync
 from datetime import datetime
 import os
 import sys
@@ -142,10 +142,10 @@ def main():
             print(f"Article '{slug}' generated successfully.")
             print("-------------------")
 
-            # Generate images with DALL-E 3 if enabled
+            # Generate images if enabled
             if config["GENERATE_IMAGES"]:
                 image_prompt = f"Create a realistic picture that visually represents the content described by the article slug: '{slug}'. The image should be detailed, lifelike, and appropriate for a blog post."
-                image_url = generate_image(image_client, image_prompt)
+                image_url = generate_image_sync(image_client, image_prompt, provider=config["IMAGE_PROVIDER"].lower())
                 image_file = os.path.join(article_dir, f"{slug}_image.png")
 
                 # Download the image from the URL and save it locally
