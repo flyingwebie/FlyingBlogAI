@@ -17,9 +17,11 @@ def load_config():
 
     config = {
         "AI_PROVIDER": os.getenv("AI_PROVIDER", "openai"),
+        "IMAGE_PROVIDER": os.getenv("IMAGE_PROVIDER", "openai"),
         "OPENAI_API_KEY": os.getenv('OPENAI_API_KEY'),
         "OPENAI_MODEL": os.getenv('OPENAI_MODEL'),
         "CLAUDE_API_KEY": os.getenv('CLAUDE_API_KEY'),
+        "FAL_KEY": os.getenv('FAL_KEY'),
         "CLAUDE_MODEL": os.getenv('CLAUDE_MODEL'),
         "PERPLEXITY_API_KEY": os.getenv('PERPLEXITY_API_KEY'),
         "OPENAI_ASSISTANT_ID": os.getenv('OPENAI_ASSISTANT_ID'),
