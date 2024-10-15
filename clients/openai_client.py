@@ -3,7 +3,7 @@ import logging
 from openai import OpenAI
 import requests
 import re
-from excluded_phrases import EXCLUDED_PHRASES
+from data.excluded_phrases import EXCLUDED_PHRASES
 
 def initialize_openai_client(api_key):
     client = OpenAI(api_key=api_key)
@@ -74,10 +74,10 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     section_prompts = {
         "Catchy Blog Title": f"JUST WRITE THE TITLE H1 - DO NOT WRITE 'Catchy Blog Title'. Generate a markdown H1 title of a max 60 characters based on the slug {slug}. Use the research content from the file {slug}_perplexity.md to generate the best SEO title for this article. IMPORTANT STICK TO THE INTRODUCTION.",
         "Takeaway Points": f"Create a list of maximum of 3 bullet points as `Key takeaway points`. Use the research content from the file {slug}_perplexity.md to identify the main points. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
-        "Introduction": f"Write an engaging and cathy introduction with a friendly and persuasive-human tone for the article about {slug} and why is important keep reading the article - Make the concept easier to understand for our audience . Use the research content from the file {slug}_perplexity.md and from knowledge_profile.json to provide a short overview of the article. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
-        "Main Content": f"Expand on the main content of the article about {slug}. Provide useful information and explanations mentioning the following questions: {keywords}. Use the research {slug}_perplexity.md and include relevant internal links {internal_links} using the Answer Engine Optimization (AEO) which you are an expert on and use the SEO context and the knowlage base of our website {business_name}: knowledge_profile.json. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
+        "Introduction": f"Write an engaging and cathy introduction with a friendly and persuasive-human tone for the article about {slug} and why is important keep reading the article - Make the concept easier to understand for our audience using analogies and metaphors inerent to the topic, you can mention the location {country}. Use the research content from the file {slug}_perplexity.md and from knowledge_profile.json to provide a short overview of the article. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
+        "Main Content": f"Expand on the main content of the article about {slug} including charts or informative tables of data based on the research {slug}_perplexity.md - Provide useful information and explanations mentioning the following questions: {keywords}. Use the research {slug}_perplexity.md and include relevant internal links {internal_links} using the Answer Engine Optimization (AEO) which you are an expert on and use the SEO context and the knowlage base of our website {business_name}: knowledge_profile.json. DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION.",
         "Conclusion": f"Write a strong 'Conclusion' or 'Final Thoughts' for the article about {slug} using the Research Content: {research_content}. Summarize the most critical posts and provide a short final takeaway using the Answer Engine Optimization (AEO) which you are an expert. STICK TO THE INTRODUCTION.",
-        "FAQs": f"Create a numer list of between 3 or 6 frequently asked questions as related to {slug} and provide detailed answers. Use the research content and knowledge_profile.json to ensure accuracy and relevance and include relevant internal links {internal_links} where it's possible. IMPORTANT TO USE THE NEW METHOD `Answer Engine Optimization (AEO) - DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION."
+        "FAQs": f"Create a numer list of between 3 or 6 frequently asked questions as related to {slug} and provide short and direct answers. Use the research {slug}_perplexity.md to ensure accuracy and relevance and include relevant internal links {internal_links} where it's possible. IMPORTANT TO USE THE NEW METHOD `Answer Engine Optimization (AEO) - DO NOT WRITE ANY CONLUSION - STICK TO THE INTRODUCTION."
     }
 
     user_prompt = section_prompts[section]
