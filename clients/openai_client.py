@@ -2,6 +2,8 @@ import openai
 import logging
 from openai import OpenAI
 import requests
+import re
+from excluded_phrases import EXCLUDED_PHRASES
 
 def initialize_openai_client(api_key):
     client = OpenAI(api_key=api_key)
@@ -80,11 +82,18 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
 
     user_prompt = section_prompts[section]
 
+    system_message = f"""You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that writes for the website {business_name}. Write in {language} language using a 7th-grade comprehension level. {ai_character_instructions}
+
+    Important: Avoid using the following phrases or sentences in your content:
+    {', '.join(EXCLUDED_PHRASES)}
+
+    If you find yourself about to use any of these phrases, rephrase your sentence to convey the same meaning without using these specific words or constructions."""
+
     prompt = [
+        {"role": "system", "content": system_message},
         {"role": "user", "content": f"DO NOT WRITE OR MENTION OTHER COMPANIES OR COMPETITORS. You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that write for the website {business_name}, write it in {language} language using 7 grade. YOUR TASK: {user_prompt} - DO NOT MENTION OR WRITE THE WORD '{section}', INSTEAD REPLACE IT WITH A BETTER MARKDOWN H2 TITLE BASED ON THE ARTICE'S KEYWORDS. REMEMBER TO Create engaging and informative content with a friendly and persuasive-human tone using the new method `Answer Engine Optimization (AEO)`, our goal is provide great value to the end user."}
     ]
 
-    #logging.info(f"Prompt sent to OpenAI for section '{section}': {prompt}")
     logging.info(f"Prompt sent to OpenAI for section '{section}'")
 
     response = client.chat.completions.create(

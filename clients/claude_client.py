@@ -1,7 +1,9 @@
 import logging
 import random
 import time
+import re
 from anthropic import Anthropic, APIStatusError, APITimeoutError, APIConnectionError, RateLimitError
+from excluded_phrases import EXCLUDED_PHRASES
 
 def initialize_claude_client(api_key):
     client = Anthropic(api_key=api_key)
@@ -78,14 +80,19 @@ def create_section_content(client, model, assistant_id, slug, keywords, section,
     [CntGnWkflw]:1.[CntxtAnlyss]: 1a.IdPurps→2a,3a 1b.DfTpics→2b,3b 1c.CrtvDrctn→2c,3c 2.[TskFrmt]: 2a.SctnGdlns→3a,4a 2b.TpcDpth→3b,5a 2c.DsrdLng→3c,4b,5b 3.[AplTech]: 3a.Implmnt 〔AvdAIDtct〕 →7a,7b 3b.UtilzUnqVc→4a,6a 3c.Mntn12yoComprhn→5b,6b 4.[ShrtPnchyStl]: 4a.PnchnssEncrg→5a,6a 4b.WrtngTchnqs→5b,6b 5.[EdtEnhnc]: 5a.FcsOrgnlty→8a 5b.SmplfyLng→8b 6.[HmnCrtvty]: 6a.IncrprtLfExprnc→8a 6b.RlyEmtns→8b 7.[FrmtOtpt]: 7a.AsmbSctns→8a 7b.VrfyGdlnsMt→8b 8.[FnlRvw]: 8a.CntntEval→_Rslt_ 8b.FdbkLp→_Itrtn_
     """
 
-    system_message = f"You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that writes for the website {business_name}. Write in {language} language using a 7th-grade comprehension level. {ai_character_instructions}"
+    system_message = f"""You are the SEO and Copywriter-Storyteller expert using the new method `Answer Engine Optimization (AEO)` that writes for the website {business_name}. Write in {language} language using a 7th-grade comprehension level. {ai_character_instructions}
 
-    user_message = f"Please, just write the content, no not add any content and use Markdown format: {user_prompt}"
+    Important: Avoid using the following phrases or sentences in your content:
+    {', '.join(EXCLUDED_PHRASES)}
+
+    If you find yourself about to use any of these phrases, rephrase your sentence to convey the same meaning without using these specific words or constructions."""
+
+    user_message = f"Please, just write the content, do not add any extra content, and use Markdown format: {user_prompt}"
 
     logging.info(f"Prompt sent to Claude for section '{section}'")
 
     max_retries = 5
-    base_delay = 30  # starting delay of 1 second
+    base_delay = 30  # starting delay of 30 seconds
 
     for attempt in range(max_retries):
         try:
